@@ -3,10 +3,12 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Camera, Mic, Leaf, Droplets, Sprout, Globe, ChevronRight } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useNavigate } from "react-router-dom";
 
 const Index = () => {
   const [selectedLanguage, setSelectedLanguage] = useState("en");
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const languages = [
     { code: "en", name: "English", flag: "🇺🇸" },
@@ -20,37 +22,34 @@ const Index = () => {
       icon: Camera,
       title: "Leaf Scanner",
       description: "Scan leaves to detect diseases instantly",
-      action: "scan-leaf",
+      route: "/leaf-scanner",
       variant: "camera" as const,
     },
     {
       icon: Droplets,
       title: "Soil Analysis",
       description: "Analyze soil health and nutrients",
-      action: "scan-soil",
+      route: "/soil-analysis",
       variant: "secondary" as const,
     },
     {
       icon: Sprout,
       title: "Crop Suggestions",
       description: "Get AI-powered crop recommendations",
-      action: "crop-suggest",
+      route: "/crop-suggestions",
       variant: "success" as const,
     },
     {
       icon: Mic,
       title: "Voice Assistant",
       description: "Speak your farming questions",
-      action: "voice-input",
+      route: "/voice-assistant",
       variant: "voice" as const,
     },
   ];
 
-  const handleFeatureClick = (action: string) => {
-    toast({
-      title: "Feature Coming Soon!",
-      description: `${action} functionality will be available soon.`,
-    });
+  const handleFeatureClick = (route: string) => {
+    navigate(route);
   };
 
   return (
@@ -105,11 +104,21 @@ const Index = () => {
           </div>
 
           <div className="flex flex-wrap gap-3 justify-center">
-            <Button variant="scan" size="lg" className="animate-pulse-glow">
+            <Button 
+              variant="scan" 
+              size="lg" 
+              className="animate-pulse-glow"
+              onClick={() => navigate('/leaf-scanner')}
+            >
               <Camera className="w-5 h-5" />
               Start Scanning
             </Button>
-            <Button variant="voice" size="fab" className="animate-pulse-glow">
+            <Button 
+              variant="voice" 
+              size="fab" 
+              className="animate-pulse-glow"
+              onClick={() => navigate('/voice-assistant')}
+            >
               <Mic className="w-6 h-6" />
             </Button>
           </div>
@@ -121,9 +130,9 @@ const Index = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-4xl mx-auto">
           {features.map((feature, index) => (
             <Card 
-              key={feature.action}
+              key={feature.route}
               className="group cursor-pointer hover:shadow-card transition-all duration-300 hover:-translate-y-1 border-border/50"
-              onClick={() => handleFeatureClick(feature.action)}
+              onClick={() => handleFeatureClick(feature.route)}
             >
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
