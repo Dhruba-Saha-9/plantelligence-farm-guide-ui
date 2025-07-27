@@ -5,6 +5,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { ArrowLeft, Mic, MicOff, MessageCircle, Send, Volume2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
+import { askGemini } from "@/lib/gemini";
 
 interface Message {
   id: string;
@@ -14,22 +15,22 @@ interface Message {
 }
 
 const VoiceAssistant = () => {
+  console.log('Gemini API Key:', import.meta.env.VITE_GEMINI_API_KEY);
   const [isListening, setIsListening] = useState(false);
   const [textInput, setTextInput] = useState("");
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
       type: 'assistant',
-      content: 'नमस्ते! मैं आपका AI कृषि सहायक हूं। आप मुझसे फसल, बीज, खाद, या कृषि से संबंधित कोई भी सवाल पूछ सकते हैं। आप बोलकर या टाइप करके सवाल पूछ सकते हैं।',
+      content: 'Hello! I am your AI farm assistant. You can ask me any questions about crops, seeds, fertilizers, or farming. You can speak or type your questions.',
       timestamp: new Date()
     }
   ]);
-  const [selectedLanguage, setSelectedLanguage] = useState("hi");
+  const [selectedLanguage, setSelectedLanguage] = useState("en");
   const { toast } = useToast();
   const navigate = useNavigate();
 
   const languages = [
-    { code: "hi", name: "हिंदी", flag: "🇮🇳" },
     { code: "en", name: "English", flag: "🇺🇸" },
     { code: "bn", name: "বাংলা", flag: "🇧🇩" },
     { code: "te", name: "తెలుగు", flag: "🇮🇳" },
@@ -40,7 +41,7 @@ const VoiceAssistant = () => {
     // Simulate voice recognition
     setTimeout(() => {
       setIsListening(false);
-      setTextInput("मेरी गेहूं की फसल में पत्तियां पीली हो रही हैं");
+      setTextInput("My wheat crop leaves are turning yellow");
       toast({
         title: "Voice Captured",
         description: "Your voice message has been converted to text",
@@ -65,23 +66,25 @@ const VoiceAssistant = () => {
     setMessages(prev => [...prev, userMessage]);
     setTextInput("");
 
-    // Simulate AI response
-    setTimeout(() => {
-      const responses = [
-        "गेहूं की पत्तियों का पीला होना आमतौर पर नाइट्रोजन की कमी या पानी की अधिकता के कारण होता है। मिट्टी की जांच कराएं और उचित मात्रा में यूरिया का छिड़काव करें।",
-        "यह iron chlorosis का संकेत हो सकता है। मिट्टी में iron sulphate मिलाएं और drainage की जांच करें।",
-        "पत्तियों के पीले होने के मुख्य कारण हैं: 1) पोषक तत्वों की कमी 2) अधिक पानी 3) रोग। तुरंत किसी कृषि विशेषज्ञ से सलाह लें।"
-      ];
-
-      const assistantMessage: Message = {
-        id: (Date.now() + 1).toString(),
+    // Show loading message
+    const loadingId = (Date.now() + 1).toString();
+    setMessages(prev => [
+      ...prev,
+      {
+        id: loadingId,
         type: 'assistant',
-        content: responses[Math.floor(Math.random() * responses.length)],
+        content: 'Thinking...'
+        ,
         timestamp: new Date()
-      };
+      }
+    ]);
 
-      setMessages(prev => [...prev, assistantMessage]);
-    }, 1500);
+    // Get Gemini response
+    const reply = await askGemini(content);
+
+    setMessages(prev => prev.map(m =>
+      m.id === loadingId ? { ...m, content: reply } : m
+    ));
   };
 
   const handleSubmit = () => {
@@ -91,7 +94,7 @@ const VoiceAssistant = () => {
   const speakMessage = (text: string) => {
     if ('speechSynthesis' in window) {
       const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = selectedLanguage === 'hi' ? 'hi-IN' : selectedLanguage === 'bn' ? 'bn-BD' : 'en-US';
+      utterance.lang = selectedLanguage === 'bn' ? 'bn-BD' : selectedLanguage === 'te' ? 'te-IN' : 'en-US';
       speechSynthesis.speak(utterance);
     }
   };
@@ -203,7 +206,7 @@ const VoiceAssistant = () => {
           <CardContent className="p-4">
             <div className="flex gap-2">
               <Textarea
-                placeholder="Type your farming question here... (या यहाँ अपना कृषि प्रश्न टाइप करें...)"
+                placeholder="Type your farming question here..."
                 value={textInput}
                 onChange={(e) => setTextInput(e.target.value)}
                 className="min-h-[60px] resize-none"

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Camera, Mic, Leaf, Droplets, Sprout, Globe, ChevronRight } from "lucide-react";
+import { Camera, Mic, Leaf, Droplets, Sprout, Globe, ChevronRight, Users, BarChart3, CloudSun, Landmark } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 
@@ -45,6 +45,34 @@ const Index = () => {
       description: "Speak your farming questions",
       route: "/voice-assistant",
       variant: "voice" as const,
+    },
+    {
+      icon: Users,
+      title: "Community",
+      description: "Discuss, collaborate, and schedule meetings with other farmers",
+      route: "/community",
+      variant: "default" as const,
+    },
+    {
+      icon: BarChart3,
+      title: "Market Prices",
+      description: "View real-time crop prices in your local markets",
+      route: "/market-prices",
+      variant: "warning" as const,
+    },
+    {
+      icon: CloudSun,
+      title: "Weather Update",
+      description: "Get the latest weather forecasts and alerts",
+      route: "/weather-update",
+      variant: "secondary" as const,
+    },
+    {
+      icon: Landmark,
+      title: "Government Schemes",
+      description: "Explore the latest schemes and subsidies for farmers",
+      route: "/govt-schemes",
+      variant: "success" as const,
     },
   ];
 

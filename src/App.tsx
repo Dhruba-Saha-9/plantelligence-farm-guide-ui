@@ -9,6 +9,10 @@ import SoilAnalysis from "./pages/SoilAnalysis";
 import CropSuggestions from "./pages/CropSuggestions";
 import VoiceAssistant from "./pages/VoiceAssistant";
 import NotFound from "./pages/NotFound";
+import Community from "./pages/Community";
+import MarketPrices from "./pages/MarketPrices";
+import WeatherUpdate from "./pages/WeatherUpdate";
+import GovtSchemes from "./pages/GovtSchemes";
 
 const queryClient = new QueryClient();
 
@@ -24,6 +28,10 @@ const App = () => (
           <Route path="/soil-analysis" element={<SoilAnalysis />} />
           <Route path="/crop-suggestions" element={<CropSuggestions />} />
           <Route path="/voice-assistant" element={<VoiceAssistant />} />
+          <Route path="/community" element={<Community />} />
+          <Route path="/market-prices" element={<MarketPrices />} />
+          <Route path="/weather-update" element={<WeatherUpdate />} />
+          <Route path="/govt-schemes" element={<GovtSchemes />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
